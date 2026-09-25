@@ -80,8 +80,23 @@ function DashboardPage({ cases, artifacts, analysis }) {
     return Math.round(artifacts.reduce((sum, item) => sum + item.score, 0) / artifacts.length);
   }, [artifacts]);
 
+  const recoveredFiles = useMemo(() => {
+    const items = analysis?.recovered_items || defaultAnalysis.recovered_items || [];
+    return items.map((item, index) => ({
+      name: item.name || `Recovered_File_${index + 1}`,
+      type: item.type || 'file',
+      status: item.status || 'recovered',
+      recovery: Math.round((item.confidence || 0.75) * 100),
+    }));
+  }, [analysis]);
+
   const topPriority = analysis?.priority_queue?.[0]?.item || 'Recovered ledger';
   const repairedPreview = analysis?.repaired_preview ? String(analysis.repaired_preview).slice(0, 500) : '';
+  const highPriorityFiles = recoveredFiles.slice(0, 3);
+  const recoveryConfidence = recoveredFiles.length ? Math.round(recoveredFiles.reduce((sum, item) => sum + item.recovery, 0) / recoveredFiles.length) : 0;
+  const reconstructedDocs = recoveredFiles.filter((item) => ['pdf', 'doc', 'docx', 'txt', 'csv'].includes(String(item.type).toLowerCase())).length;
+  const partialImages = recoveredFiles.filter((item) => ['jpg', 'jpeg', 'png', 'bmp', 'gif'].includes(String(item.type).toLowerCase())).length;
+  const summaryText = analysis?.ai_summary || `Recovered ${recoveredFiles.length} files with ${recoveryConfidence}% overall confidence. ${reconstructedDocs} documents reconstructed and ${partialImages} images partially restored.`;
 
   return (
     <>
@@ -153,29 +168,39 @@ function DashboardPage({ cases, artifacts, analysis }) {
         </div>
       </section>
 
+      <section className="summary-metrics">
+        <div className="summary-chip">
+          <span>Total recovered</span>
+          <strong>{recoveredFiles.length}</strong>
+        </div>
+        <div className="summary-chip">
+          <span>Documents reconstructed</span>
+          <strong>{reconstructedDocs}</strong>
+        </div>
+        <div className="summary-chip">
+          <span>Images partially restored</span>
+          <strong>{partialImages}</strong>
+        </div>
+        <div className="summary-chip accent">
+          <span>Recovery confidence</span>
+          <strong>{recoveryConfidence}%</strong>
+        </div>
+      </section>
+
       <section className="panel-group two-column lower-grid">
         <div className="panel">
           <div className="panel-header">
-            <h2>Recovered evidence artifacts</h2>
+            <h2>Recovered Files</h2>
           </div>
-          <div className="artifact-grid">
-            {artifacts.map((item) => (
-              <article className="artifact-card" key={item.id}>
-                <div className="artifact-topline">
-                  <span className="artifact-type">{item.type}</span>
-                  <span className={`score badge-${item.score >= 80 ? 'good' : item.score >= 65 ? 'warn' : 'bad'}`}>{item.score}</span>
+          <div className="recovery-list">
+            {recoveredFiles.map((item) => (
+              <div className="recovery-item" key={item.name}>
+                <div>
+                  <strong>{item.name}</strong>
+                  <small>{item.type.toUpperCase()} • {item.status}</small>
                 </div>
-                <h3>{item.id}</h3>
-                <div className="artifact-meta">
-                  <span>{item.format}</span>
-                  <span>{item.priority}</span>
-                </div>
-                <div className="tags">
-                  {item.tags.map((tag) => (
-                    <span key={tag}>{tag}</span>
-                  ))}
-                </div>
-              </article>
+                <span className="recovery-score">Recovery: {item.recovery}%</span>
+              </div>
             ))}
           </div>
         </div>
@@ -184,22 +209,29 @@ function DashboardPage({ cases, artifacts, analysis }) {
           <div className="panel-header">
             <h2>Investigator summary</h2>
           </div>
-          <p className="report-copy">{analysis?.ai_summary || 'No forensic summary available yet.'}</p>
+
+          <div className="priority-box">
+            <h3>High Priority Files</h3>
+            <ul>
+              {highPriorityFiles.map((item) => (
+                <li key={item.name}>✓ {item.name}</li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="ai-summary-box">
+            <h3>AI Summary Generated</h3>
+            <p>{summaryText}</p>
+          </div>
 
           {repairedPreview && (
-            <>
-              <div className="panel-header">
-                <h2>Recovered / repaired file preview</h2>
-              </div>
-              <pre className="report-copy" style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', marginTop: '8px' }}>
-                {repairedPreview}
-              </pre>
+            <div className="preview-box">
+              <h3>Recovered / repaired file preview</h3>
+              <pre>{repairedPreview}</pre>
               {analysis?.repaired_file_name && (
-                <small style={{ color: '#9eafc7', display: 'block', marginTop: '8px' }}>
-                  Repaired file: {analysis.repaired_file_name}
-                </small>
+                <small>Repaired file: {analysis.repaired_file_name}</small>
               )}
-            </>
+            </div>
           )}
 
           <div className="timeline">

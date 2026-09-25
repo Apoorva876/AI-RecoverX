@@ -269,10 +269,123 @@ button, input, textarea, select { font: inherit; }
   align-items: start;
 }
 
+.summary-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 0 0 18px;
+}
+
+.summary-chip {
+  background: rgba(12, 18, 24, 0.78);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.summary-chip span {
+  color: var(--muted);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.summary-chip strong {
+  font-size: 1.6rem;
+}
+
+.summary-chip.accent {
+  background: linear-gradient(135deg, rgba(99, 214, 255, 0.12), rgba(124, 58, 237, 0.12));
+}
+
 .artifact-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(150px, 1fr));
   gap: 12px;
+}
+
+.recovery-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.recovery-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(12, 18, 24, 0.8);
+}
+
+.recovery-item strong,
+.recovery-item small {
+  display: block;
+}
+
+.recovery-item small {
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.recovery-score {
+  font-weight: 700;
+  color: var(--good);
+}
+
+.priority-box,
+.ai-summary-box,
+.preview-box {
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: rgba(12, 18, 24, 0.7);
+}
+
+.priority-box h3,
+.ai-summary-box h3,
+.preview-box h3 {
+  margin: 0 0 10px;
+  font-size: 0.96rem;
+}
+
+.priority-box ul {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--text);
+}
+
+.ai-summary-box p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.preview-box pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: rgba(7, 12, 18, 0.8);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+  color: #dfeeff;
+}
+
+.preview-box small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
 }
 
 .artifact-card {
