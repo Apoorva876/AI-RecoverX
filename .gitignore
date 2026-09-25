@@ -1,0 +1,35 @@
+# Node / frontend
+node_modules/
+dist/
+.vite/
+.env.local
+.env.development.local
+.env.production.local
+
+# Python / backend
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.venv/
+venv/
+ENV/
+.env
+.env.*
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Uploads and local generated data
+uploads/
+*.tmp
+*.bak
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
